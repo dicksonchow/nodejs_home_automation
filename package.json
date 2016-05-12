@@ -1,0 +1,28 @@
+{
+  "name": "nodejs_home_automation",
+  "version": "1.0.0",
+  "description": "To achieve home automation in browser with NodeJS",
+  "main": "dht11.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/dicksonchow/nodejs_home_automation.git"
+  },
+  "keywords": [
+    "Home",
+    "Automation"
+  ],
+  "author": "Dickson Chow",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/dicksonchow/nodejs_home_automation/issues"
+  },
+  "homepage": "https://github.com/dicksonchow/nodejs_home_automation#readme",
+  "devDependencies": {
+    "ejs": "^2.4.1",
+    "express": "^4.13.4",
+    "node-dht-sensor": "0.0.11"
+  }
+}
