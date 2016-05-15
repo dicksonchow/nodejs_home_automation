@@ -2,7 +2,7 @@
   "name": "nodejs_home_automation",
   "version": "1.0.0",
   "description": "To achieve home automation in browser with NodeJS",
-  "main": "dht11.js",
+  "main": "app.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
@@ -23,6 +23,7 @@
   "devDependencies": {
     "ejs": "^2.4.1",
     "express": "^4.13.4",
-    "node-dht-sensor": "0.0.11"
+    "node-dht-sensor": "0.0.11",
+    "socket.io": "~1.4.6"
   }
 }
