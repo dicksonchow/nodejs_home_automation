@@ -1,5 +1,6 @@
 var dht = require('node-dht-sensor');
-var spawn = require('child_process');
+var fs = require('fs');
+var spawn = require('child_process').spawn;
 var express = require('express');
 var app = express();
 var io = require('socket.io').listen(app.listen(8080, function () {
@@ -8,6 +9,10 @@ var io = require('socket.io').listen(app.listen(8080, function () {
 
 	console.log('Server listenins at http://%s:%s', host, port);
 }));
+
+// Setting global variables for video streaming
+var proc;
+var sockets = {};
 
 // Setting the variable for the dht temperature sensor
 var dht_type = 22; // 11 for dht11, 22 for dht22
@@ -23,6 +28,7 @@ if (!dht.initialize(dht_type, dht_pin)){
 // Setting the configuration for ejs and external JavaScript in client-side
 app.set('view engine', 'ejs');
 app.use(express.static(__dirname + '/ressources'));
+app.use(express.static(__dirname + '/stream'));
 
 
 // Setting the route
@@ -30,7 +36,7 @@ app.get('/', function (req, res){
 	res.render('pages/index');
 });
 
-app.get('watch', function (req, res) {
+app.get('/watch', function (req, res) {
 	res.render('pages/watch')
 })
 
