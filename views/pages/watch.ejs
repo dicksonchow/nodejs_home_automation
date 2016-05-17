@@ -30,7 +30,8 @@
             <button type="button" id="" class="btn btn-info start" onclick="startStream()">Start Camera</button>
 
             <div class="row">
-                <img src="" id="stream">
+                <!--img src="" id="stream"-->
+				<canvas id="videostream" width="640" height="480" style="border:solid;"></canvas>
             </div>
         </div>
     </div>
@@ -50,10 +51,23 @@
 <script src="/socket.io/socket.io.js"></script>
 <script>
     var socket = io();
-    socket.on('liveStream', function(url) {
-        $('#stream').attr('src', url);
-        $('.start').hide();
-    });
+
+	socket.on('canvas', function(data) {
+		try {
+			// 1. method: draw on canvas
+			var canvas = document.getElementById('videostream');
+			var context = canvas.getContext('2d');
+			var imageObj = new Image();
+			imageObj.src = "data:image/jpeg;base64,"+data;
+			imageObj.onload = function(){
+				context.height = imageObj.height;
+				context.width = imageObj.width;
+				context.drawImage(imageObj,0,0,context.width,context.height);
+			}
+			// 2. method: draw as CSS background
+			// $('#videostream').css('background', 'transparent url(data:image/jpeg;base64,'+data+') top left / 100% 100% no-repeat');
+		} catch(e){ }
+	});
 
     function startStream() {
         socket.emit('start-stream');

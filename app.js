@@ -7,7 +7,7 @@ var io = require('socket.io').listen(app.listen(8080, function () {
 	var host = this.address().address;
 	var port = this.address().port;
 
-	console.log('Server listenins at http://%s:%s', host, port);
+	console.log('Server listening at http://%s:%s', host, port);
 }));
 
 // Setting global variables for video streaming
@@ -79,15 +79,21 @@ function startStreaming(io) {
 		return;
 	}
 
-	var args = ["-w", "640", "-h", "480", "-o", "./stream/image_stream.jpg", "-t", "999999999", "-tl", "100"];
+	var args = ["-w", "640", "-h", "480", "-o", "stream/image_stream.jpg", "-t", "999999999", "-tl", "0.01"];
 	proc = spawn('raspistill', args);
-
 	console.log('Watching for changes...');
 
 	app.set('watchingFile', true);
+	
+	var file_path = 'stream/image_stream.jpg';
 
-	fs.watchFile('./stream/image_stream.jpg', function(current, previous) {
-		io.sockets.emit('liveStream', 'image_stream.jpg?_t=' + (Math.random() * 100000));
-	})
-
+	fs.watchFile(file_path,
+	{
+		persistent: true,
+		interval: 0.01
+	},
+	(curr, prev) => {
+		var frame = new Buffer(fs.readFileSync(file_path)).toString('base64');
+		io.sockets.emit('canvas', frame);
+	});
 }
