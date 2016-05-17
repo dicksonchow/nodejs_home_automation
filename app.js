@@ -1,4 +1,4 @@
-var dht = require('node-dht-sensor');
+// var dht = require('node-dht-sensor');
 var fs = require('fs');
 var spawn = require('child_process').spawn;
 var express = require('express');
@@ -15,14 +15,14 @@ var proc;
 var sockets = {};
 
 // Setting the variable for the dht temperature sensor
-var dht_type = 22; // 11 for dht11, 22 for dht22
-var dht_pin = 19; // follow the number on the T-board
+// var dht_type = 22; // 11 for dht11, 22 for dht22
+// var dht_pin = 19; // follow the number on the T-board
 
 // Test if the program can detect the dht sensor properly
-if (!dht.initialize(dht_type, dht_pin)){
-	console.warn('Failed to initialize sensor');
-	process.exit(1);
-}
+// if (!dht.initialize(dht_type, dht_pin)){
+// 	console.warn('Failed to initialize sensor');
+// 	process.exit(1);
+// }
 
 
 // Setting the configuration for ejs and external JavaScript in client-side
@@ -58,8 +58,8 @@ io.sockets.on('connection', function (socket) {
 
 	setInterval(function () {
 		socket.emit('gettemp', {
-			'temp' : dht.read().temperature.toFixed(1),
-			'humidity': dht.read().humidity.toFixed(1)
+			'temp' : 10, //dht.read().temperature.toFixed(1),
+			'humidity': 10 //dht.read().humidity.toFixed(1)
 		});
 	}, 1000);
 });
