@@ -1,13 +1,14 @@
 // var dht = require('node-dht-sensor');
 var fs = require('fs');
 var spawn = require('child_process').spawn;
+var crypto = require('crypto'); // This line should be placed in here. =] Just like importing an new library
 var express = require('express');
 var bodyParser = require('body-parser');
 var app = express();
+
 var io = require('socket.io').listen(app.listen(8080, function () {
 	var host = this.address().address;
 	var port = this.address().port;
-
 	console.log('Server listening at http://%s:%s', host, port);
 }));
 
@@ -17,7 +18,7 @@ var sockets = {};
 
 var mysql      = require('mysql');
 var connection = mysql.createConnection({
-	host     : '10.37.1.83',
+	host     : '127.0.0.1',
 	user     : 'homeauto',
 	password : 'p@ssw0rd',
 	database : 'homeauto'
@@ -57,32 +58,22 @@ app.get('/watch', function (req, res) {
 
 app.post('/auth', function (req, res) {
 
-	console.log(req.body.username);
-	console.log(req.body.password);
-
 	var username = req.body.username;
 	var password = req.body.password;
+
+	var CHECK_USER_QUERY = "SELECT * FROM homeusers WHERE username = '"
+		+ username + "' AND password ='"
+		+ crypto.createHash('sha256').update(password).digest("hex") + "';";
 	
 	connection.connect();
-
-	// const crypto = require('crypto');
-	// const hash = crypto.createHash('sha256');
-
-	// const input = hash.update(password);
-
-	var crypto = require('crypto');
-	var hash = crypto.createHash('sha256').update(password).digest("hex");
-
-	var SQL_select = "SELECT * FROM homeusers WHERE username = '" + username + "' AND password ='"+hash + "';";
-
-	connection.query(SQL_select, function(err, rows, fields) {
+	connection.query(CHECK_USER_QUERY, function(err, rows, fields) {
 		if (!err)
-			//console.log('The solution is: ', rows);
+			// You need to place a line to create a new session/cookie for the user =]
+
 			res.render('pages/index');
 		else
-			console.log('Error while performing Query.');
+			console.log(err.toString());
 	});
-
 	connection.end();
 });
 

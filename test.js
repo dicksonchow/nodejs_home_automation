@@ -3,7 +3,7 @@
  */
 var mysql      = require('mysql');
 var connection = mysql.createConnection({
-    host     : '10.37.1.83',
+    host     : '127.0.0.1',
     user     : 'homeauto',
     password : 'p@ssw0rd',
     database : 'homeauto'
@@ -11,11 +11,11 @@ var connection = mysql.createConnection({
 
 connection.connect();
 
-connection.query('SELECT * from homeusers WHERE username = \'dickson\' and password = \'dickson\';', function(err, rows, fields) {
+connection.query('SELECT * from homeusers WHERE username = \'dickson\'', function(err, rows, fields) {
     if (!err)
         console.log('The solution is: ', rows);
     else
-        console.log('Error while performing Query.');
+        console.log(err.toString());
 });
 
 connection.end();
