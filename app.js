@@ -2,6 +2,7 @@
 var fs = require('fs');
 var spawn = require('child_process').spawn;
 var express = require('express');
+var bodyParser = require('body-parser');
 var app = express();
 var io = require('socket.io').listen(app.listen(8080, function () {
 	var host = this.address().address;
@@ -13,6 +14,14 @@ var io = require('socket.io').listen(app.listen(8080, function () {
 // Setting global variables for video streaming
 var proc;
 var sockets = {};
+
+var mysql      = require('mysql');
+var connection = mysql.createConnection({
+	host     : '10.37.1.83',
+	user     : 'homeauto',
+	password : 'p@ssw0rd',
+	database : 'homeauto'
+	});
 
 // Setting the variable for the dht temperature sensor
 // var dht_type = 22; // 11 for dht11, 22 for dht22
@@ -27,19 +36,55 @@ var sockets = {};
 
 // Setting the configuration for ejs and external JavaScript in client-side
 app.set('view engine', 'ejs');
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({extended: true}));
 app.use(express.static(__dirname + '/ressources'));
 app.use(express.static(__dirname + '/stream'));
 
 
 // Setting the route
 app.get('/', function (req, res){
+	res.render('pages/login');
+});
+
+app.get('/live', function (req, res){
 	res.render('pages/index');
 });
 
 app.get('/watch', function (req, res) {
 	res.render('pages/watch')
-})
+});
 
+app.post('/auth', function (req, res) {
+
+	console.log(req.body.username);
+	console.log(req.body.password);
+
+	var username = req.body.username;
+	var password = req.body.password;
+	
+	connection.connect();
+
+	// const crypto = require('crypto');
+	// const hash = crypto.createHash('sha256');
+
+	// const input = hash.update(password);
+
+	var crypto = require('crypto');
+	var hash = crypto.createHash('sha256').update(password).digest("hex");
+
+	var SQL_select = "SELECT * FROM homeusers WHERE username = '" + username + "' AND password ='"+hash + "';";
+
+	connection.query(SQL_select, function(err, rows, fields) {
+		if (!err)
+			//console.log('The solution is: ', rows);
+			res.render('pages/index');
+		else
+			console.log('Error while performing Query.');
+	});
+
+	connection.end();
+});
 
 // Setting the io socket
 io.sockets.on('connection', function (socket) {
@@ -57,11 +102,11 @@ io.sockets.on('connection', function (socket) {
 	});
 
 	setInterval(function () {
-		socket.emit('gettemp', {
-			'temp' : 10, //dht.read().temperature.toFixed(1),
-			'humidity': 10 //dht.read().humidity.toFixed(1)
-		});
-	}, 1000);
+	socket.emit('gettemp', {
+		'temp' : 10, //dht.read().temperature.toFixed(1),
+		'humidity': 10 //dht.read().humidity.toFixed(1)
+	});
+}, 1000);
 });
 
 

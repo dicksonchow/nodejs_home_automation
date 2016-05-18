@@ -21,6 +21,7 @@
   },
   "homepage": "https://github.com/dicksonchow/nodejs_home_automation#readme",
   "devDependencies": {
+    "body-parser": "^1.15.1",
     "ejs": "^2.4.1",
     "express": "^4.13.4",
     "node-dht-sensor": "0.0.11",
